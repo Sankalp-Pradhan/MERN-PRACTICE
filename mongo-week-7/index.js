@@ -19,10 +19,13 @@ app.post("/signup", async function (req, res) {
     })
     const parsedDataWithSuccess = requireBody.safeParse(req.body);
 
-    if(!parsedDataWithSuccess){
+    if(!parsedDataWithSuccess.success){
         res.json({
-            message : "incoreect format"
+            message : "incoreect format",
+            error : parsedDataWithSuccess.error
+
         })
+        return
     }
 
     const email = req.body.email;
