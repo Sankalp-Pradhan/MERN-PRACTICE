@@ -1,40 +1,82 @@
+const bcrypt = require("bcrypt")
 const express = require("express");
 const { UserModel, TodoModel } = require("./db")
 const jwt = require("jsonwebtoken");
 const { default: mongoose } = require("mongoose");
 const JWT_SECRET = "asdfg@123"
+const {z} = require("zod");
 
-mongoose.connect("mongodb+srv://sankalppradhan1906:5Pm5kRpSYeKOqjJF@cluster0.ked4nml.mongodb.net/sankap-todo111")
+
+mongoose.connect("mongodb+srv://sankalppradhan1906:aaBoV246fqBYgIfX@cluster0.ked4nml.mongodb.net/sankap-todo12")
 const app = express()
 app.use(express.json());
 
 app.post("/signup", async function (req, res) {
+    const requireBody = z.object({
+        email : z.string().min(3).max(100).email(),
+        password : z.string().min(3).max(100),
+        name : z.string().min(3).max(100)
+    })
+    const parsedDataWithSuccess = requireBody.safeParse(req.body);
+
+    if(!parsedDataWithSuccess){
+        res.json({
+            message : "incoreect format"
+        })
+    }
+
     const email = req.body.email;
     const password = req.body.password ;
     const name = req.body.name ;
 
-    
-    await UserModel.create({
-        email: email,
-        password: password,
-        name: name
-    })
-    res.json({
+        if(typeof email !== (String && Number)  || email.length<5 || !email.includes("@")){
+            res.json({
+                message : "email incorrect"
+            })
+            return
+        }
+        // let errorThrown = false ;
+        // try {
+        const hashedPassword = await bcrypt.hash(password, 5 );
+        console.log(hashedPassword);
+        
+        await UserModel.create({
+            email: email,
+            password: hashedPassword,
+            name: name
+        })
+
+    // // } catch (e) {
+    //     res.json({
+    //         message : "User already exists"
+    //     })
+    //     errorThrown = false;    
+    // }
+    //   if (!errorThrown){ 
+         res.json({
         message: "you are logged in"
     })
+// }
 })
 
 app.post("/signin", async function (req, res) {
     const email = req.body.email;
-    const password = req.body.password 
+    const password = req.body.password; 
 
     const user = await UserModel.findOne({
         email : email,
-        password : password 
     })
-     console.log(user);
 
-    if(user){
+    if(!user){
+        res.status(403).json({
+            message : "User do esnot exist"
+        })
+        return
+    }
+     
+   const passwordMatch = await bcrypt.compare(password , user.password);
+
+    if(passwordMatch){
         const token = jwt.sign({
             id : user._id,
 
@@ -71,7 +113,6 @@ function auth(req,res,next){
         req.userId = decodedData.userId;
         next();
     }
-
 }
 
 app.listen(3000);
