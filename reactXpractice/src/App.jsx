@@ -1,4 +1,4 @@
-import { useState , useEffect } from "react";
+import { useState, useEffect } from "react";
 
 function App() {
   return <div>
@@ -10,25 +10,26 @@ function Counter() {
   const [count, setCount] = useState(0);
 
   //hooking into the lifecycle events of react
+  console.log("this will come every time it re-renders")
+  // wraping your function inside a setEffect it make sures your functions runs only once no matter how many times it re-renders
+  useEffect(function () {
+    setInterval(function () {
+      setCount(count => count + 1)
+    }, 1000)
+    console.log("this will come once no matter how many time it re-renders")
 
-    setInterval(function(){
-      setCount(count + 1)
-    },1000)
+  }, []);
 
+  // setInterval(function(){
+  //   setCount(count + 1)
+  // },1000)
 
-    // setInterval(function(){
-    //   setCount(count + 1)
-    // },1000)
+  function increaseCount() {
+    setCount(count => count + 1);
+  }
 
-    function increaseCount() {
-      setCount(count => count + 1);
-    }
-  
-    return <div>
+  return <div>
     <div id="text">{count}</div>
-    <button onClick={increaseCount}>Increase Count</button>
-    <button onClick={decreaseCount}>decrease Count</button>
-    <button onClick={resetCount}>reset Count</button>
   </div>
 
 }
