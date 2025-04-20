@@ -8,7 +8,7 @@ function App() {
     setInterval(() => {
       setCountVisible(c => !c)
     }, 5000);
-  },[])
+  }, [])
 
   return <div>
     hii
@@ -24,12 +24,19 @@ function Counter() {
   //hooking into the lifecycle events of react
   console.log("this will come every time it re-renders")
   // wraping your function inside a setEffect it make sures your functions runs only once no matter how many times it re-renders
+
+  //clear interval
   useEffect(function () {
-    setInterval(function () {
+    console.log('on mount')
+    let clock = setInterval(function () {
       setCount(count => count + 1)
     }, 1000)
     console.log("this will come once no matter how many time it re-renders")
-
+//you have to run unmouont logic otherwise clock will go infinte
+    return function () {
+      console.log("on unmount");
+      clearInterval(clock)
+    }
   }, []);
 
   // setInterval(function(){
