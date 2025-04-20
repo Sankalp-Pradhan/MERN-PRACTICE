@@ -1,8 +1,20 @@
 import { useState, useEffect } from "react";
 
+//conditonal rendering
 function App() {
+  let [countVisible, setCountVisible] = useState(true);
+
+  useEffect(function () {
+    setInterval(() => {
+      setCountVisible(c => !c)
+    }, 5000);
+  },[])
+
   return <div>
-    <Counter></Counter>
+    hii
+    {/* {countVisible ? <Counter></Counter> : null} //this is by using ternery operator same thing is below */}
+    {countVisible && <Counter></Counter>}
+    hello
   </div>
 }
 //mounting ,rendering , unmounting
