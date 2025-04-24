@@ -17,19 +17,36 @@ function App() {
     //     </div >
     // )
 
-    const [state, setState] = useState(0);
-    const prev = usePrev(state);
+    // const [state, setState] = useState(0);
+    // const prev = usePrev(state);
+    function useDebounce(orignalFn){
+        const currentClock = useRef();
 
+        const fn = () =>{
+            clearTimeout(currentClock.current);
+            currentClock.current = setTimeout(orignalFn,30);
+        }
+        return fn
+    }
+
+    function sendDataToBackend() {
+        fetch("api.amazon.com/search/")
+    }
+  
     return (
+
+        //     <p>{state}</p>
+        //     <button on onClick={() => {
+        //         setState((curr) => curr + 1 );
+        //     }}>
+        //         fuck me ohh sorry Click me
+        //     </button>
+        //     <p>The previous value was{prev}</p>
+
         <>
-            <p>{state}</p>
-            <button on onClick={() => {
-                setState((curr) => curr + 1 );
-            }}>
-                fuck me ohh sorry Click me
-            </button>
-            <p>The previous value was{prev}</p>
+            <input type="text" onChange={debounceFn} />
         </>
+
     )
 }
 
